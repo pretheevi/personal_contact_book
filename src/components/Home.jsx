@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import AddContact from './HomeComponents/AddContact';
-import EditContact from './HomeComponents/EditContact';
-import ContactList from './HomeComponents/ContactList';
+import AddContact from './home-components/AddContact';
+import EditContact from './home-components/EditContact';
+import ContactList from './home-components/ContactList';
 import api from '../axios';
 import { FiMenu, FiX, FiUser, FiPlus, FiEdit2 } from 'react-icons/fi';
 import { toast } from 'react-toastify';

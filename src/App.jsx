@@ -2,11 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 import { ToastContainer } from 'react-toastify';
 
-import Login from "./Components/AuthComponents/Login.jsx";
-import Register from "./Components/AuthComponents/Register";
-import ForgotPassword from "./Components/AuthComponents/ForgotPassword";
-import Home from "./Components/Home";
-import Profile from "./Components/HomeComponents/Profile";
+import Login from "./components/auth-components/Login.jsx";
+import Register from "./components/auth-components/Register.jsx";
+import ForgotPassword from "./components/auth-components/ForgotPassword.js";
+import Home from "./components/Home.jsx";
+import Profile from "./components/home-components/Profile.jsx";
 
 
 function App() {
