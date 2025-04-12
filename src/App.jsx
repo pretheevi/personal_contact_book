@@ -4,7 +4,7 @@ import { ToastContainer } from 'react-toastify';
 
 import Login from "./components/auth-components/Login.jsx";
 import Register from "./components/auth-components/Register.jsx";
-import ForgotPassword from "./components/auth-components/ForgotPassword.js";
+import ForgotPassword from "./components/auth-components/Forgot-Password.jsx";
 import Home from "./components/Home.jsx";
 import Profile from "./components/home-components/Profile.jsx";
 
