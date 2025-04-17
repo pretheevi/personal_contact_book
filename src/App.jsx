@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
-import { ToastContainer } from 'react-toastify';
+import { Toaster } from 'sonner';
 
 import Login from "./components/auth-components/Login.jsx";
 import Register from "./components/auth-components/Register.jsx";
 import ForgotPassword from "./components/auth-components/Forgot-Password.jsx";
-import Home from "./components/Home.jsx";
+import Home from "./components/home.jsx";
 import Profile from "./components/home-components/Profile.jsx";
 
 
@@ -24,17 +24,10 @@ function App() {
         </Routes>
       </BrowserRouter>
 
-      <ToastContainer
+      <Toaster
         position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
+        richColors
+        closeButton
       />
     </>
   )

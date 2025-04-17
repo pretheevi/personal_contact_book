@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { FiEdit2, FiTrash2, FiStar, FiUser, FiPhone, FiMail, FiMapPin } from 'react-icons/fi';
 import api from '../../axios';
 

@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import api from '../../axios';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'sonner';
 
 function Login() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   const [inputs, setInputs] = useState({
     email: '',
@@ -20,7 +19,6 @@ function Login() {
   const handleOnChange = (event) => {
     const { name, value } = event.target;
     setInputs(prev => ({...prev, [name]: value}));
-    // Clear error when user types
     if (errors[name]) {
       setErrors(prev => ({...prev, [name]: ''}));
     }
@@ -41,7 +39,7 @@ function Login() {
     if (!inputs.password) {
       newErrors.password = 'Password is required';
       valid = false;
-    } else if (inputs.password.length < 3) {
+    } else if (inputs.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
       valid = false;
     }
@@ -58,7 +56,7 @@ function Login() {
       return;
     }
   
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
   
     try {
       const response = await api.post('/login', inputs);
@@ -66,19 +64,13 @@ function Login() {
       if (response.status === 200) {
         localStorage.setItem("user", JSON.stringify(response.data.user));
         
-        toast.update({
-          render: response.data.message || 'Login successful!',
-          type: 'success',
-          isLoading: false,
+        toast.success(response.data.message || 'Login successful!', {
           autoClose: 2000
         });
         
         navigate("/home");
       } else {
-        toast.update({
-          render: 'Unexpected response from server',
-          type: 'error',
-          isLoading: false,
+        toast.error('Unexpected response from server', {
           autoClose: 3000
         });
       }
@@ -106,53 +98,27 @@ function Login() {
       
       toast.error(errorMessage, { autoClose: 3000 });
       
-      console.error('Login error:', {
-        error: err,
-        response: err.response,
-        request: err.request
-      });
+      console.error('Login error:', err);
     } finally {
-      setIsLoading(false); // Stop loading regardless of success/error
+      setIsLoading(false);
     }
   };
 
-  const handleSignUpLink = () => {
-    navigate("/register");
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#71618d] to-[#dcd4da] flex justify-center items-center p-4">
-      <div className="w-full max-w-md bg-white/60 backdrop-blur-sm rounded-xl shadow-lg p-8">
+    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-8 w-8 text-purple-700" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" 
-              />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-[#584c61] mb-2">Your Personal Contact Book</h1>
-          <p className="text-[#584c61]/80 text-sm">Sign in to access your contacts</p>
+          <h1 className="text-2xl font-semibold text-gray-800 mb-1">Contact Manager</h1>
+          <p className="text-gray-600 text-sm">Sign in to access your contacts</p>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[#584c61]/80 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
             <input
-              className={`w-full bg-white/70 backdrop-blur-sm rounded-lg px-4 py-2.5 text-sm text-[#584c61] outline-none focus:ring-2 focus:ring-purple-500/50 transition ${
-                errors.email ? 'border border-red-500' : 'border-none'
-              }`}
+              className={`w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
               type="email"
               id="email"
               name="email"
@@ -164,13 +130,11 @@ function Login() {
           </div>
           
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-[#584c61]/80 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
             <input
-              className={`w-full bg-white/70 backdrop-blur-sm rounded-lg px-4 py-2.5 text-sm text-[#584c61] outline-none focus:ring-2 focus:ring-purple-500/50 transition ${
-                errors.password ? 'border border-red-500' : 'border-none'
-              }`}
+              className={`w-full px-3 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
               type="password"
               id="password"
               name="password"
@@ -187,17 +151,21 @@ function Login() {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 accent-purple-500 focus:ring-purple-500 rounded"
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-[#584c61]/80">
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                 Remember me
               </label>
             </div>
             
             <div className="text-sm">
-              <p onClick={() => navigate('/forgot-password')} className="cursor-pointer font-medium text-purple-700 hover:text-purple-600">
+              <button 
+                type="button"
+                onClick={() => navigate('/forgot-password')} 
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
                 Forgot password?
-              </p>
+              </button>
             </div>
           </div>
           
@@ -205,7 +173,7 @@ function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition disabled:opacity-80"
+              className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-70"
             >
               {isLoading ? (
                 <>
@@ -223,14 +191,15 @@ function Login() {
         </form>
         
         <div className="mt-6 text-center">
-          <p className="text-sm text-[#584c61]/80 flex justify-center">
+          <p className="text-sm text-gray-600">
             Don't have an account?{' '}
-            <span 
-              className="font-medium text-purple-700 hover:text-purple-600 cursor-pointer pl-1"
-              onClick={() => handleSignUpLink()}
+            <button 
+              type="button"
+              onClick={() => navigate('/register')} 
+              className="font-medium text-blue-600 hover:text-blue-500"
             >
               Sign up
-            </span>
+            </button>
           </p>
         </div>
       </div>

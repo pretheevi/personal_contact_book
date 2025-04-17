@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../axios';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 function ForgotPassword() {
   const navigate = useNavigate();
@@ -22,7 +22,6 @@ function ForgotPassword() {
       ...prev,
       [name]: value
     }));
-    // Clear error when user types
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -38,7 +37,6 @@ function ForgotPassword() {
       password: ''
     };
 
-    // Email validation
     if (!inputs.email) {
       newErrors.email = 'Email is required';
       valid = false;
@@ -47,7 +45,6 @@ function ForgotPassword() {
       valid = false;
     }
 
-    // Password validation
     if (!inputs.password) {
       newErrors.password = 'New password is required';
       valid = false;
@@ -64,6 +61,7 @@ function ForgotPassword() {
     e.preventDefault();
   
     if (!validateForm()) {
+      toast.error('Please fix the form errors before submitting', { autoClose: 3000 });
       return;
     }
     
@@ -94,27 +92,11 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#71618d] to-[#dcd4da] flex justify-center items-center p-4">
-      <div className="w-full max-w-md bg-white/60 backdrop-blur-sm rounded-xl shadow-lg p-8">
+    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-8 w-8 text-purple-700" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" 
-              />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-[#584c61] mb-2">Reset Password</h1>
-          <p className="text-[#584c61]/80 text-sm">
+          <h1 className="text-2xl font-semibold text-gray-800 mb-2">Reset Password</h1>
+          <p className="text-gray-600 text-sm">
             {isSubmitted 
               ? "Your password has been updated successfully!"
               : "Enter your email and new password"}
@@ -122,15 +104,13 @@ function ForgotPassword() {
         </div>
 
         {!isSubmitted ? (
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#584c61]/80 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address <span className="text-red-500">*</span>
               </label>
               <input
-                className={`w-full bg-white/70 backdrop-blur-sm rounded-lg px-4 py-2.5 text-sm text-[#584c61] outline-none focus:ring-2 focus:ring-purple-500/50 transition ${
-                  errors.email ? 'border border-red-500' : 'border-none'
-                }`}
+                className={`w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                 type="email"
                 id="email"
                 name="email"
@@ -142,13 +122,11 @@ function ForgotPassword() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#584c61]/80 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 New Password <span className="text-red-500">*</span>
               </label>
               <input
-                className={`w-full bg-white/70 backdrop-blur-sm rounded-lg px-4 py-2.5 text-sm text-[#584c61] outline-none focus:ring-2 focus:ring-purple-500/50 transition ${
-                  errors.password ? 'border border-red-500' : 'border-none'
-                }`}
+                className={`w-full px-3 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                 type="password"
                 id="password"
                 name="password"
@@ -157,16 +135,14 @@ function ForgotPassword() {
                 placeholder="••••••••"
               />
               {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
-              <p className="mt-1 text-xs text-[#584c61]/60">Password must be at least 6 characters</p>
+              <p className="mt-1 text-xs text-gray-500">Password must be at least 6 characters</p>
             </div>
 
             <div className="pt-2">
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition ${
-                  isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                }`}
+                className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-70"
               >
                 {isLoading ? (
                   <>
@@ -200,7 +176,7 @@ function ForgotPassword() {
             </svg>
             <button
               onClick={handleBackToLogin}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-purple-700 bg-purple-100 hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition"
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
             >
               Back to Login
             </button>
@@ -209,14 +185,15 @@ function ForgotPassword() {
 
         {!isSubmitted && (
           <div className="mt-6 text-center">
-            <p className="text-sm text-[#584c61]/80 flex justify-center">
+            <p className="text-sm text-gray-600">
               Remember your password?{' '}
-              <span 
-                className="font-medium text-purple-700 hover:text-purple-600 cursor-pointer pl-1"
+              <button 
+                type="button"
                 onClick={handleBackToLogin}
+                className="font-medium text-blue-600 hover:text-blue-500"
               >
                 Login here
-              </span>
+              </button>
             </p>
           </div>
         )}
