@@ -8,4 +8,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    rollupOptions: {
+      input: 'index.html',
+    }
+  },
+  publicDir: 'public' // Ensures files from the public/ folder are copied to the build/ directory
 })
