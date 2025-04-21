@@ -61,7 +61,7 @@ function Home() {
         return;
       }
       const response = await api.post('/add-contact', newContact);
-      setContacts([...contacts, response.data.data]);
+      setContacts(prev => [...prev, response.data.data]);
       toast.success("Contact added successfully!");
       setRefreshForm(true);
     } catch (error) {
@@ -70,8 +70,9 @@ function Home() {
   };
 
   useEffect(() => {
-    console.log('contact added')
+    console.log('📞 Updated contacts:', contacts)
   }, [contacts])
+  
 
   const handleEditContact = async (updatedContact) => {
     try {
@@ -248,7 +249,7 @@ function Home() {
         )}
 
         {activeTab === 'contacts' && (
-          <section className='lg:col-span-8 lg:col-start-5 xl:col-span-6 xl:col-start-5'>
+          <section className='lg:col-span-8 lg:col-start-5 xl:col-span-8 xl:col-start-5'>
             <div>
               <div className='flex justify-between items-center'>
                 <button 
