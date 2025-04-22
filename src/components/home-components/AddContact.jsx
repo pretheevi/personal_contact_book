@@ -77,7 +77,7 @@ function AddContact({ onAddContact, refreshForm, setRefreshForm }) {
                     <button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className='flex items-center gap-1 bg-purple-600 hover:bg-purple-700 transition-colors rounded-lg px-4 py-2 text-white text-sm font-medium disabled:opacity-50'
+                        className='flex items-center gap-1 bg-blue-600 hover:bg-blue-700 transition-colors rounded-lg px-4 py-2 text-white text-sm font-medium disabled:opacity-50'
                     >
                         {isSubmitting ? (
                             'Adding...'

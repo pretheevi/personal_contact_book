@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../axios';
+import { toast } from 'sonner';
 
 function EditProfile() {
   const navigate = useNavigate();
@@ -13,28 +14,27 @@ function EditProfile() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   function initUser() {
     const userData = localStorage.getItem('user');
     if (!userData) {
-      navigate('/')
+      navigate('/');
+      toast.error('User data not found');
       throw new Error("User data not found");
     }
     const user = JSON.parse(userData);
     if (!user?.id) {
-      navigate('/')
+      navigate('/');
+      toast.error('User ID missing');
       throw new Error("User ID missing");
     }
-      return user.id;
+    return user.id;
   }
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const user_id = initUser();
-
         const response = await api.get(`/profile/${user_id}`);
         const profileArray = response.data.profile;
         
@@ -46,6 +46,7 @@ function EditProfile() {
         });
       } catch (err) {
         console.error("Error fetching profile data:", err);
+        toast.error('Failed to load profile data');
       } finally {
         setLoading(false);
       }
@@ -61,7 +62,6 @@ function EditProfile() {
       [name]: value
     }));
     
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -96,27 +96,33 @@ function EditProfile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error('Please fix the form errors');
+      return;
+    }
     
     setIsSubmitting(true);
-    setSubmitError(null);
     
     try {
       const user_id = initUser();
-      if (!user_id){
-        navigate('/')
+      if (!user_id) {
+        navigate('/');
+        return;
       }
+      
       const response = await api.put(`/update-profile/${user_id}`, formData);
+      
       if (response.data.status === 200) {
-        setSubmitSuccess(true);
+        toast.success('Profile updated successfully!');
         setTimeout(() => {
           navigate('/profile');
         }, 1500);
       } else {
-        setSubmitError(response.data.message || 'Failed to update profile');
+        toast.error(response.data.message || 'Failed to update profile');
       }
     } catch (err) {
-      setSubmitError(err.response?.data?.message || err.message || 'Failed to update profile');
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to update profile';
+      toast.error(errorMessage);
       console.error("Update error:", err);
     } finally {
       setIsSubmitting(false);
@@ -159,28 +165,6 @@ function EditProfile() {
           
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            {submitSuccess && (
-              <div className="p-4 rounded-md bg-green-50 border border-green-200">
-                <div className="flex items-center">
-                  <svg className="h-5 w-5 text-green-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <p className="text-green-800 font-medium">Profile updated successfully!</p>
-                </div>
-              </div>
-            )}
-            
-            {submitError && (
-              <div className="p-4 rounded-md bg-red-50 border border-red-200">
-                <div className="flex items-center">
-                  <svg className="h-5 w-5 text-red-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                  <p className="text-red-800 font-medium">{submitError}</p>
-                </div>
-              </div>
-            )}
-            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Name Field */}
               <div>
@@ -266,16 +250,16 @@ function EditProfile() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:opacity-50"
+                className="px-6 py-2.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:opacity-50 flex items-center justify-center min-w-[120px]"
               >
                 {isSubmitting ? (
-                  <span className="flex items-center justify-center">
+                  <>
                     <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     Saving...
-                  </span>
+                  </>
                 ) : 'Save Changes'}
               </button>
             </div>
