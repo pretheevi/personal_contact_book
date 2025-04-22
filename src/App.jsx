@@ -7,7 +7,7 @@ import Register from "./components/auth-components/Register.jsx";
 import ForgotPassword from "./components/auth-components/Forgot-Password.jsx";
 import Home from "./components/Home.jsx";
 import Profile from "./components/home-components/Profile.jsx";
-
+import EditProfile from "./components/home-components/EditProfile.jsx";
 
 function App() {
   const loggedIn = localStorage.getItem('user')
@@ -21,6 +21,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/home" element={loggedIn? <Home /> : <Login />} />
           <Route path="/profile" element={loggedIn? <Profile /> : <Login />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
         </Routes>
       </BrowserRouter>
 

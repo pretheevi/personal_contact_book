@@ -16,27 +16,49 @@ function Home() {
   const [activeTab, setActiveTab] = useState('contacts');
   const [userId, setUserId] = useState(null);
   
+  
+  function initUser() {
+    const userData = localStorage.getItem('user');
+    if (!userData) {
+      navigate('/')
+      throw new Error("User data not found");
+    }
+    const user = JSON.parse(userData);
+    if (!user?.id) {
+      navigate('/')
+      throw new Error("User ID missing");
+    }
+      return user.id;
+  }
+
+  const handleApiError = (error) => {
+    toast.error(error?.response?.data?.message || "Something went wrong");
+  };
+  
+
+
   // Initialize user_id from localStorage
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user?.id) 
-      setUserId(user.id);
+    try {
+      const id = initUser();
+      setUserId(id);
+    } catch (error) {
+      console.error(error.message);
+      navigate('/');
+    }
   }, []);
+  
 
   // Fetch contacts on component mount
   useEffect(() => {
     if (!userId) return;
-  
+
     const fetchContacts = async () => {
       try {
         const response = await api.get(`/contacts/${userId}`);
         setContacts(response.data.contacts);
       } catch (error) {
-        if(error.response.data.message === "No contacts found"){
-          toast.error("Add your first contact");
-        } else{
-          toast.error(error.response.data.message);
-        }
+        handleApiError(error)
       } finally {
         setIsLoading(false);
       }
@@ -65,13 +87,13 @@ function Home() {
       toast.success("Contact added successfully!");
       setRefreshForm(true);
     } catch (error) {
-      toast.error(error.response.data.message);
+      handleApiError(error)
     }
   };
 
-  useEffect(() => {
-    console.log('📞 Updated contacts:', contacts)
-  }, [contacts])
+  // useEffect(() => {
+  //   console.log('📞 Updated contacts:', contacts)
+  // }, [contacts])
   
 
   const handleEditContact = async (updatedContact) => {
@@ -85,12 +107,10 @@ function Home() {
           break;
         }
       }
-
       if (no_change) {
         toast.error("No changes made");
         return;
       }
-
       if (!updatedContact.contact_name || !updatedContact.contact_phone) {
         toast.error("Name and phone are required");
         return;
@@ -102,35 +122,26 @@ function Home() {
       setEditingId(null);
       toast.success("Contact updated successfully!");
     } catch (error) {
-      toast.error(error.message);
+      handleApiError(error)
     }
   };
 
   const handleDeleteContact = async (contactId) => {
     try {
-      const user = JSON.parse(localStorage.getItem('user'));
       await api.delete(`/delete-contact/${contactId}`, {
-        data: { user_id: user.id }
+        data: { user_id: userId }
       });
       
       setContacts(contacts.filter(contact => contact.id !== contactId));
       toast.success("Contact deleted successfully!");
     } catch (error) {
-      toast.error("Failed to delete contact");
+      handleApiError(error)
     }
   };
   
   const startEditing = (contact) => {
     setEditingId(contact.id);
   };
-
-  const [profile, setProfile] = useState(false);
-  useEffect(() => {
-    if(profile) {
-      navigate('/profile')
-      setProfile(false);
-    }
-  }, [profile])
 
   return (
     <div className="min-h-screen bg-gray-50 w-full overflow-x-hidden p-4 md:p-8">
@@ -142,7 +153,7 @@ function Home() {
         
         {/* Desktop Profile */}
         <div 
-          onClick={() => setProfile(true)}  
+          onClick={() => navigate('/profile')} 
           className='hidden lg:flex items-center space-x-2 cursor-pointer'
         >
           <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
@@ -191,9 +202,7 @@ function Home() {
             className={`w-full text-left px-4 py-3 flex items-center ${
               activeTab === 'profile' ? 'bg-gray-200' : 'hover:bg-gray-100'
             } text-gray-800`}
-            onClick={() => {
-              setProfile(true);
-            }}
+            onClick={() => navigate('/profile')}
           >
             <FiEdit2 className='mr-2 cursor-pointer' /> Profile
           </button>
