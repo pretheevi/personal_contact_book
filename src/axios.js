@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://personal-contact-book-server.onrender.com',
+    baseURL: 'https://personalcontactbookserver-production.up.railway.app',
     headers: {
         'Content-Type': 'application/json'
     }
